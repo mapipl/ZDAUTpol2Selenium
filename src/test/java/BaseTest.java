@@ -1,4 +1,6 @@
 import devToPages.DevToMainPage;
+import devToPages.DevToSinglePostPage;
+import devToPages.DevToWeekPage;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,23 +38,19 @@ public class BaseTest {
 
     @Test
     public void selectFirstPostFromWeek() {
-        DevToMainPage devToMainPage = new DevToMainPage(driver);
-        devToMainPage.goToWeek();
+        DevToMainPage devToMainPage = new DevToMainPage(driver, wait);
+        DevToWeekPage devToWeekPage = devToMainPage.goToWeekPage();
 
+        String firstPostLink = devToWeekPage.firstPostOnWeek.getAttribute("href");
+        String firstPostText = devToWeekPage.firstPostOnWeek.getText();
 
-        wait.until(ExpectedConditions.urlToBe("https://dev.to/top/week")); //zanim zaczniesz szukać elementu, poczekaj aż url będzie miał wartość https://dev.to/top/week
-        WebElement firstPostOnWeek = driver.findElement(By.cssSelector("h2.crayons-story__title > a"));
-        String firstPostOnWeekText = firstPostOnWeek.getText();
-        String firstPostLink = firstPostOnWeek.getAttribute("href");
-        firstPostOnWeek.click();
+        DevToSinglePostPage devToSinglePostPage = devToWeekPage.selectFirstPost();
         wait.until(ExpectedConditions.urlToBe(firstPostLink));
-        WebElement postTitle = driver.findElement(By.cssSelector("div.crayons-article__header__meta > h1"));
+        String postTitleText = devToSinglePostPage.postTitle.getText();
+        String currentUrl = driver.getCurrentUrl();
 
-        String postUrl = driver.getCurrentUrl();
-        String postTitleText = postTitle.getText();
-
-        assertEquals("Urls aren't the same", postUrl, firstPostLink);
-        assertEquals("Titles aren't the same", postTitleText, firstPostOnWeekText);
+        assertEquals("Urls aren't the same", currentUrl, firstPostLink);
+        assertEquals("Titles aren't the same", postTitleText, firstPostText);
     }
 
     @Test
