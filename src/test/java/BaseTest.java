@@ -1,7 +1,4 @@
-import devToPages.DevToMainPage;
-import devToPages.DevToSearchResultsPage;
-import devToPages.DevToSinglePostPage;
-import devToPages.DevToWeekPage;
+import devToPages.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -103,10 +100,13 @@ public class BaseTest {
 
     @Test
     public void playFourthPodcast() {
-        WebElement podcast = driver.findElement(By.xpath("//a[@href='/pod']"));
-        podcast.click();
+
+        DevToMainPage devToMainPage = new DevToMainPage(driver,wait);
+        DevToPodcastPage devToPodcastPage = devToMainPage.goToPodcast();
+
         wait.until(ExpectedConditions.urlToBe("https://dev.to/pod"));
         wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.tagName("h3")));
+
         List<WebElement> podcasts = driver.findElements(By.tagName("h3"));
         podcasts.get(3).click();
         wait.until(ExpectedConditions.urlContains("stackpodcast"));

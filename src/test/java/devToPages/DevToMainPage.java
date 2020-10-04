@@ -20,6 +20,9 @@ public class DevToMainPage {
     @FindBy(id = "nav-search")
     WebElement searchBox;
 
+    @FindBy(xpath = "//a[@href='/pod']")
+    WebElement podcastBtn;
+
     public DevToMainPage(WebDriver driver, WebDriverWait wait) {
         this.driver = driver;
         this.wait = wait;
@@ -37,6 +40,11 @@ public class DevToMainPage {
         searchBox.sendKeys(searchText);
         searchBox.sendKeys(Keys.ENTER);
         return new DevToSearchResultsPage(this.driver, this.wait);
+    }
+
+    public DevToPodcastPage  goToPodcast(){
+        podcastBtn.click();
+       return new DevToPodcastPage(this.driver, this.wait);
     }
 
 }
