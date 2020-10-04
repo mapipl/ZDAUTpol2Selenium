@@ -1,0 +1,39 @@
+package devToPages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class DevToSearchResultsPage {
+    WebDriverWait wait;
+    WebDriver driver;
+    public String url = "https://dev.to/search?q=";
+
+    @FindBy(css = "h2.crayons-story__title a")
+    List<WebElement> postTitleList;
+
+    public DevToSearchResultsPage(WebDriver driver, WebDriverWait wait) {
+        this.driver = driver;
+        this.wait = wait;
+        PageFactory.initElements(driver, this);
+    }
+
+    public ArrayList<String> getTopThreePostTitles() {
+        wait.until(ExpectedConditions.visibilityOfAllElements(postTitleList));
+
+        ArrayList<String> ar = new ArrayList<String>();
+        for (int i = 0; i < 3; i++) {
+            ar.add(postTitleList.get(i).getText());
+        }
+
+        return ar;
+    }
+
+
+}

@@ -1,15 +1,19 @@
 import devToPages.DevToMainPage;
+import devToPages.DevToSearchResultsPage;
 import devToPages.DevToSinglePostPage;
 import devToPages.DevToWeekPage;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -55,18 +59,34 @@ public class BaseTest {
 
     @Test
     public void searchBarTesting() {
-        WebElement searchBox = driver.findElement(By.id("nav-search"));
+
+        DevToMainPage devToMainPage = new DevToMainPage(driver, wait);
         String searchText = "testing";
-        String searchUrl = "https://dev.to/search?q=";
-        String cssSelector = "h2.crayons-story__title a";
-        searchBox.sendKeys(searchText + Keys.ENTER);
-        wait.until(ExpectedConditions.urlToBe(searchUrl + searchText));
-        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(cssSelector)));
-        List<WebElement> postTilesList = driver.findElements(By.cssSelector(cssSelector));
-        for (int i = 0; i < 3; i++) {
-            String message = String.format("Header %d doesn't contain text %s", i, searchText);
-            Assert.assertTrue(message, postTilesList.get(i).getText().toLowerCase().contains(searchText));
+        DevToSearchResultsPage devToSearchResultsPage = devToMainPage.search(searchText);
+
+        String searchingUrlWithText = devToSearchResultsPage.url + searchText;
+        wait.until(ExpectedConditions.urlToBe(searchingUrlWithText));
+
+        ArrayList<String> postTitleList = devToSearchResultsPage.getTopThreePostTitles();
+        int i = 0;
+        while (i < 3) {
+            String postTitleText = postTitleList.get(i);
+            postTitleText = postTitleText.toLowerCase();
+            assertTrue("there is no searching value in post title", postTitleText.contains(searchText));
+            i++;
         }
+
+
+//        String searchUrl = "https://dev.to/search?q=";
+//        String cssSelector = "h2.crayons-story__title a";
+//        searchBox.sendKeys(searchText + Keys.ENTER);
+//        wait.until(ExpectedConditions.urlToBe(searchUrl + searchText));
+//        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(cssSelector)));
+//        List<WebElement> postTilesList = driver.findElements(By.cssSelector(cssSelector));
+//        for (int i = 0; i < 3; i++) {
+//            String message = String.format("Header %d doesn't contain text %s", i, searchText);
+//            Assert.assertTrue(message, postTilesList.get(i).getText().toLowerCase().contains(searchText));
+//        }
     }
 
     @Test
